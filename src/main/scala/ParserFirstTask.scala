@@ -5,20 +5,16 @@ object ParserFirstTask extends App {
 
   val lines = Source.fromResource("table.txt").getLines().mkString("\n")
 
-  def element[_: P] = P(CharIn("0-9","A-Z",".","\\-",":"," ","(",")","%","+","#","a-z","/").rep(1))
-  def endline[_: P] = P("\n")
+  def element[_: P] = P(CharIn("0-9", "A-Z", ".", "\\-", ":", " ", "(", ")", "%", "+", "#", "a-z", "/").rep(1))
+  def lineSeparator[_: P] = P("\n")
 
-  def garbageLine[_: P] = P(element ~ endline)
+  def garbageLine[_: P] = P(element ~ lineSeparator)
   def header[_: P] = P(Start ~ garbageLine.rep)
-  def footer[_: P] = P(garbageLine.rep ~ element ~ End)
+  def footer[_: P] = P(garbageLine.rep ~ End)
 
-  def line[_: P] = P((element ~ "\t").!.rep(1) ~ element ~ endline.?).!
-  def splitedLine[_: P] =
-    P(line.map(x => x.replaceAll("(\r\n)|\r|\n", "")
-    .split("\t")
-    .toList))
+  def line[_: P] = P(element.!.rep(min = 2, sep = "\t") ~ lineSeparator.?)
   def table[_: P] =
-    P(header.? ~ splitedLine.rep ~ footer.?)
+    P(header.? ~ line.rep ~ footer.?)
 
   parse(lines, table(_)) match {
     case Parsed.Success(value, successIndex) =>

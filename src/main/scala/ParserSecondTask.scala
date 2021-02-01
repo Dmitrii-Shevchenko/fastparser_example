@@ -18,6 +18,7 @@ object ParserSecondTask extends App {
 
   def table[_: P] = P(textLine.rep.? ~ tableLine.rep ~ textLine.rep.?)
   def text[_: P] = P(textLine.rep)
+
   def fileParse[_: P] = P(Start ~ text ~ lineSeparator ~ table ~ lineSeparator ~ table ~ lineSeparator ~ text)
 
   def getParse(file: String): Seq[Content] = parse(file, fileParse(_)) match {

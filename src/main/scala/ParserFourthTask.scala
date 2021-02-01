@@ -1,5 +1,4 @@
 import Content.{ Table, Text }
-import sourcecode.Text.generate
 
 import scala.io.Source
 
@@ -46,6 +45,7 @@ object ParserFourthTask extends App {
       }
     }
   }
+
   val result = getParse(config, file)
   println(result)
 }
